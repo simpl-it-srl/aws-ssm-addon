@@ -31,7 +31,7 @@ jobs:
       - name: Install required PowerShell modules
         shell: pwsh
         run: |
-          Install-Module ps2exe -ErrorAction Stop
+          Install-Module ps2exe -ErrorAction Stop -SkipPublisherCheck True
       - name: fromPs1 to exe
         shell: pwsh
         run: |
