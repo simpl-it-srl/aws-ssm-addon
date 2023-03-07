@@ -37,6 +37,7 @@ jobs:
           name: "aws-ssm-addon.xpi"
           path: ${{ steps.web-ext-build.outputs.target }}
   build-ps1:
+    needs: build-webext
     name: "Build Binaries"
     runs-on: windows-latest
     steps:
@@ -57,9 +58,7 @@ jobs:
           name: "wsl-wrapper.exe"
           path: "./wsl-wrapper.exe"
   prepare-release:
-    needs: |
-      build-ps1
-      build-webext
+    needs: build-ps1
     name: "Publish the release"
     runs-on: ubuntu-latest
     steps:
