@@ -75,6 +75,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files:
-            - wsl-wrapper.exe
-            - aws-ssm-addon.xpi
+          files: |
+            wsl-wrapper.exe
+            aws-ssm-addon.xpi
