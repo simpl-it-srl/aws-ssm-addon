@@ -32,6 +32,7 @@ jobs:
           timeout: 900000
 
       - name: "Upload Artifact"
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: "aws-ssm-addon.xpi"
