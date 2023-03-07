@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: "Build"
+    name: "Build Web extension"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -27,6 +27,13 @@ jobs:
         with:
           name: "{name}-{version}.xpi"
           path: ${{ steps.web-ext-build.outputs.target }}
+  build:
+    name: "Build Binaries"
+    runs-on: windows-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v1
+
 
       - name: Install required PowerShell modules
         shell: powershell
@@ -37,8 +44,10 @@ jobs:
         shell: powershell
         run: |
           Invoke-ps2exe ./src/ps1/wsl.ps1 ./wsl-wrapper.exe
+
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v3
         with:
           name: "wsl-wrapper.exe"
           path: "./wsl-wrapper.exe"
+    
