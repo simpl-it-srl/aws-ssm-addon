@@ -62,14 +62,10 @@ jobs:
     name: "Build Web extension"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@master
-        with:
-          name: aws-ssm-addon.xpi
-          path: aws-ssm-addon.xpi
-      - uses: actions/download-artifact@master
-        with:
-          name: wsl-wrapper.exe
-          path: wsl-wrapper.exe
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v3
+      
       - name: "Create Release"
         uses: softprops/action-gh-release@v1
         env:
