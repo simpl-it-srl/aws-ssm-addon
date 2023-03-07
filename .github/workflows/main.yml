@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-webext:
     name: "Build Web extension"
     runs-on: ubuntu-latest
     steps:
@@ -27,7 +27,7 @@ jobs:
         with:
           name: "{name}-{version}.xpi"
           path: ${{ steps.web-ext-build.outputs.target }}
-  build:
+  build-ps1:
     name: "Build Binaries"
     runs-on: windows-latest
     steps:
