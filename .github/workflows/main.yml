@@ -41,5 +41,5 @@ jobs:
         with:
           name: "{name}-{version}.xpi"
           path: ${{ steps.web-ext-build.outputs.target }}
-          name: "./wsl-wrapper.exe"
+          name: "wsl-wrapper.exe"
           path: "./wsl-wrapper.exe"
