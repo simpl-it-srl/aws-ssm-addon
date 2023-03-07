@@ -12,7 +12,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v1
-
       - name: "web-ext build"
         id: web-ext-build
         uses: kewisch/action-web-ext@v1
@@ -52,7 +51,6 @@ jobs:
         shell: powershell
         run: |
           Invoke-ps2exe ./src/ps1/wsl.ps1 ./wsl-wrapper.exe
-
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v3
         with:
@@ -60,15 +58,24 @@ jobs:
           path: "./wsl-wrapper.exe"
   prepare-release:
     needs: |
-     build-ps1
-     build-webext
-    name: "Build Web extension"
+      build-ps1
+      build-webext
+    name: "Publish the release"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
+      - name: autochangelog-action
+        id: ac
+        uses: rubenfiszel/autochangelog-action@v0.16.0
+        with:
+          manifest_file: "src/web-ext/manifest.json"
+          dry_run: false
+          issues_url_prefix: "https://github.com/org/repo/issues/"
+          tag_prefix: ""
+      - uses: avakar/tag-and-release@v1
+        with:
+          tag_name: ${{ steps.ac.outputs.version }}
       - uses: actions/download-artifact@v3
-
       - name: "Create Release"
         uses: softprops/action-gh-release@v1
         env:
