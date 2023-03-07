@@ -20,6 +20,13 @@
             "name"       : "WSL2 scripts",
             "uriTemplate": ""
         }
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "aws-ssm-addon@its-easy.be",
+        "strict_min_version": "1.0"
+      }
+    }
+    
   }
   
