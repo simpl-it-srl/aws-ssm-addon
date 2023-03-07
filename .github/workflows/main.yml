@@ -58,23 +58,23 @@ jobs:
         with:
           name: "wsl-wrapper.exe"
           path: "./wsl-wrapper.exe"
-    prepare-release:
-        name: "Build Web extension"
-        runs-on: ubuntu-latest
-        steps:
-          - uses: actions/download-artifact@master
-            with:
-              name: aws-ssm-addon.xpi
-              path: aws-ssm-addon.xpi
-          - uses: actions/download-artifact@master
-            with:
-              name: wsl-wrapper.exe
-              path: wsl-wrapper.exe
-          - name: "Create Release"
-            uses: softprops/action-gh-release@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              files: 
-                - wsl-wrapper.exe
-                - aws-ssm-addon.xpi
+  prepare-release:
+    name: "Build Web extension"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: aws-ssm-addon.xpi
+          path: aws-ssm-addon.xpi
+      - uses: actions/download-artifact@master
+        with:
+          name: wsl-wrapper.exe
+          path: wsl-wrapper.exe
+      - name: "Create Release"
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files:
+            - wsl-wrapper.exe
+            - aws-ssm-addon.xpi
