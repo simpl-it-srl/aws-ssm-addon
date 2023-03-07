@@ -31,7 +31,9 @@ jobs:
       - name: Install required PowerShell modules
         shell: pwsh
         run: |
-          Install-Module ps2exe -ErrorAction Stop -SkipPublisherCheck True
+          Install-PackageProvider NuGet -Force;
+          Set-PSRepository PSGallery -InstallationPolicy Trusted;
+          Install-Module ps2exe -ErrorAction Stop  -Repository PSGallery
       - name: fromPs1 to exe
         shell: pwsh
         run: |
