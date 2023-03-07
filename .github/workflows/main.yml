@@ -29,12 +29,12 @@ jobs:
           path: ${{ steps.web-ext-build.outputs.target }}
 
       - name: Install required PowerShell modules
-        shell: pwsh
+        shell: powershell
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted;
           Install-Module ps2exe -ErrorAction Stop  -Repository PSGallery
       - name: fromPs1 to exe
-        shell: pwsh
+        shell: powershell
         run: |
           Invoke-ps2exe ./src/ps1/wsl.ps1 ./wsl-wrapper.exe
       - name: "Upload Artifact"
