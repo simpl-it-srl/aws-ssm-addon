@@ -6,12 +6,43 @@ on:
   pull_request:
 
 jobs:
+  prepare-release:
+    name: "Prepare the release"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Extract version from manifest.json
+        id: extract_version
+        run: echo "::set-output name=version::$(jq -r '.version' manifest.json)"
+        working-directory: src/web-ext
+
+      - name: Create tag and release
+        id: create_tag_release
+        uses: marvinpinto/action-automatic-releases@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: true
+          prerelease: false
+          draft: false
+          tag_name: ${{ steps.extract_version.outputs.version }}"
+          body: "Release ${{ steps.extract_version.outputs.version }}"
+
+      - name: Pass variable to other jobs
+        id: pass_variable
+        run: echo "::set-output name=upload_url::${{ steps.create_tag_release.outputs.upload_url }}"
+
+
   build-webext:
+    needs: prepare-release
     name: "Build Web extension"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
         uses: actions/checkout@v1
+
       - name: "web-ext build"
         id: web-ext-build
         uses: kewisch/action-web-ext@v1
@@ -20,28 +51,21 @@ jobs:
           source: src/web-ext
           filename: "{name}-{version}.xpi"
           ignoreFiles: '[ "package.json","package-lock.json","yarn.lock" ]'
-      - name: "web-ext sign"
-        id: web-ext-sign
-        uses: kewisch/action-web-ext@v1
-        with:
-          cmd: sign
-          source: ${{ steps.web-ext-build.outputs.target }}
-          channel: unlisted
-          apiKey: ${{ secrets.AMO_SIGN_KEY }}
-          apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
-          timeout: 900000
 
-      - name: "Upload Artifact"
-        if: always()
-        uses: actions/upload-artifact@v3
+      - name: Attach artifact to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "aws-ssm-addon.xpi"
-          path: ${{ steps.web-ext-build.outputs.target }}
+          upload_url: ${{ needs.prepare-release.outputs..upload_url }}
+          asset_path: ${{ steps.web-ext-build.outputs.target }}
+          asset_name: aws-ssm-addon.xpi
+          asset_content_type: application/x-xpinstall
+
   build-ps1:
-    needs: build-webext
+    needs: prepare-release
     name: "Build Binaries"
     runs-on: windows-latest
-    if:  always() 
     steps:
       - name: "Checkout"
         uses: actions/checkout@v1
@@ -54,35 +78,36 @@ jobs:
         shell: powershell
         run: |
           Invoke-ps2exe ./src/ps1/wsl.ps1 ./wsl-wrapper.exe
-      - name: "Upload Artifact"
-        uses: actions/upload-artifact@v3
-        with:
-          name: "wsl-wrapper.exe"
-          path: "./wsl-wrapper.exe"
-  prepare-release:
-    needs: build-ps1
-    name: "Publish the release"
-    runs-on: ubuntu-latest
-    if:  always() 
-    steps:
-      - uses: actions/checkout@v3
-      - name: autochangelog-action
-        id: ac
-        uses: rubenfiszel/autochangelog-action@v0.16.0
-        with:
-          manifest_file: "src/web-ext/manifest.json"
-          dry_run: false
-          issues_url_prefix: "https://github.com/org/repo/issues/"
-          tag_prefix: ""
-      - uses: avakar/tag-and-release@v1
-        with:
-          tag_name: ${{ steps.ac.outputs.version }}
-      - uses: actions/download-artifact@v3
-      - name: "Create Release"
-        uses: softprops/action-gh-release@v1
+      - name: Attach artifact to release
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: |
-            wsl-wrapper.exe
-            aws-ssm-addon.xpi
+          upload_url: ${{ needs.prepare-release.outputs..upload_url }}
+          asset_path: ./wsl-wrapper.exe
+          asset_name: wsl-wrapper.exe
+
+    sign-xpi:
+      needs: build-webext
+      name: "Sign the extension"
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/download-artifact@v3
+          with:
+            name: aws-ssm-addon.xpi
+            path: ./aws-ssm-addon.xpi
+
+        - name: "web-ext sign"
+          if: always()
+          id: web-ext-sign
+          uses: kewisch/action-web-ext@v1
+          with:
+            cmd: sign
+            source: ./aws-ssm-addon.xpi
+            channel: unlisted
+            apiKey: ${{ secrets.AMO_SIGN_KEY }}
+            apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
+            timeout: 900000
+
+
+        
