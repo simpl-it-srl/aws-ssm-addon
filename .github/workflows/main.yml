@@ -56,8 +56,8 @@ jobs:
       - name: Upload XPI file as artifact
         uses: actions/upload-artifact@v2
         with:
-          name: aws-ssm-addon.xpi
-          path: ${{ steps.web-ext-build.outputs.target }}
+          name: "aws-ssm-addon-${{ needs.prepare-release.outputs.version }}.xpi"
+          path: "${{ steps.web-ext-build.outputs.target }}"
 
   build-ps1:
     needs: prepare-release
@@ -104,7 +104,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: aws-ssm-addon.xpi-${{ needs.prepare-release.outputs.version }}
+          name: "aws-ssm-addon-${{ needs.prepare-release.outputs.version }}.xpi"
           path: ./aws-ssm-addon.xpi
 
       - name: "web-ext sign"
