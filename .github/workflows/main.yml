@@ -96,10 +96,14 @@ jobs:
     name: "Sign the extension"
     runs-on: ubuntu-latest
     steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
       - uses: actions/download-artifact@v3
         id: download
         with:
           name: "aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
+          path: web-ext-artifacts/
 
       - name: "web-ext sign"
         if: always()
