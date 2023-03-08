@@ -82,18 +82,10 @@ jobs:
         shell: powershell
         run: |
           Invoke-ps2exe ./src/ps1/wsl.ps1 ./wsl-wrapper.exe
-      - name: Attach artifact to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare-release.outputs.upload_url }}
-          asset_path: ./wsl-wrapper.exe
-          asset_name: wsl-wrapper.exe
-
+      
       - name: Attach artifact to release"${{ needs.prepare-release.outputs.version }}"
         run: |
-          gh release upload "${{ needs.prepare-release.outputs.version }}" "./wsl-wrapper.exe#wsl-wrapper.exe-${{ needs.prepare-release.outputs.version }}.xpi"
+          gh release upload "${{ needs.prepare-release.outputs.version }}" "./wsl-wrapper.exe#wsl-wrapper.exe-${{ needs.prepare-release.outputs.version }}"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
