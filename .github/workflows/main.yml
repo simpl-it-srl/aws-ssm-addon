@@ -34,6 +34,8 @@ jobs:
     needs: prepare-release
     name: "Build Web extension"
     runs-on: ubuntu-latest
+     outputs:
+      version: "${{ needs.prepare-release.outputs.version }}"
     steps:
       - name: "Checkout"
         uses: actions/checkout@v3
@@ -96,7 +98,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: "aws-ssm-addon-${{ needs.prepare-release.outputs.version }}.xpi"
+          name: "aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
           path: ./aws-ssm-addon.xpi
 
       - name: "web-ext sign"
