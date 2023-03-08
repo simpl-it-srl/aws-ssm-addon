@@ -47,11 +47,17 @@ jobs:
           filename: "{name}-{version}.xpi"
           ignoreFiles: '[ "package.json","package-lock.json","yarn.lock" ]'
 
-      - name: Creating Git release tag for the "${{ needs.prepare-release.outputs.version }}" version
+      - name: Attach artifact to release"${{ needs.prepare-release.outputs.version }}"
         run: |
           gh release upload "${{ needs.prepare-release.outputs.version }}" "${{ steps.web-ext-build.outputs.target }}#aws-ssm-addon-${{ needs.prepare-release.outputs.version }}.xpi"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      
+      - name: Upload XPI file as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: aws-ssm-addon.xpi
+          path: ${{ steps.web-ext-build.outputs.target }}
 
   build-ps1:
     needs: prepare-release
@@ -60,6 +66,13 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v3
+      - name: Cache PowerShell modules
+        uses: actions/cache@v2
+        with:
+          path: $env:USERPROFILE\Documents\WindowsPowerShell\Modules
+          key: ${{ runner.os }}-ps-modules-${{ hashFiles('**/requirements.psd1') }}
+          restore-keys: |
+            ${{ runner.os }}-ps-modules-
       - name: Install required PowerShell modules
         shell: powershell
         run: |
@@ -78,7 +91,7 @@ jobs:
           asset_path: ./wsl-wrapper.exe
           asset_name: wsl-wrapper.exe
 
-      - name: Creating Git release tag for the "${{ needs.prepare-release.outputs.version }}" version
+      - name: Attach artifact to release"${{ needs.prepare-release.outputs.version }}"
         run: |
           gh release upload "${{ needs.prepare-release.outputs.version }}" "./wsl-wrapper.exe#wsl-wrapper.exe-${{ needs.prepare-release.outputs.version }}.xpi"
         env:
@@ -91,7 +104,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: aws-ssm-addon.xpi
+          name: aws-ssm-addon.xpi-${{ needs.prepare-release.outputs.version }}
           path: ./aws-ssm-addon.xpi
 
       - name: "web-ext sign"
