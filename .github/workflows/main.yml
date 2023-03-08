@@ -27,9 +27,6 @@ jobs:
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Pass variable to other jobs
-        id: pass_variable
-        run: echo "::set-output name=upload_url::${{ steps.create_tag_release.outputs.upload_url }}"
 
   build-webext:
     needs: prepare-release
@@ -48,9 +45,9 @@ jobs:
           filename: "{name}-{version}.xpi"
           ignoreFiles: '[ "package.json","package-lock.json","yarn.lock" ]'
 
-      - name: Creating Git release tag for the "${{ steps.extract_version.outputs.version }}" version
+      - name: Creating Git release tag for the "${{ needs.prepare-release.outputs.version }}" version
         run: |
-          gh release upload "${{ steps.extract_version.outputs.version }}" "${{ steps.web-ext-build.outputs.target }}#aws-ssm-addon-${{ steps.extract_version.outputs.version }}.xpi"
+          gh release upload "${{ needs.prepare-release.outputs.version }}" "${{ steps.web-ext-build.outputs.target }}#aws-ssm-addon-${{ needs.prepare-release.outputs.version }}.xpi"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
@@ -79,9 +76,9 @@ jobs:
           asset_path: ./wsl-wrapper.exe
           asset_name: wsl-wrapper.exe
 
-      - name: Creating Git release tag for the "${{ steps.extract_version.outputs.version }}" version
+      - name: Creating Git release tag for the "${{ needs.prepare-release.outputs.version }}" version
         run: |
-          gh release upload "${{ steps.extract_version.outputs.version }}" "./wsl-wrapper.exe#wsl-wrapper.exe-${{ steps.extract_version.outputs.version }}.xpi"
+          gh release upload "${{ needs.prepare-release.outputs.version }}" "./wsl-wrapper.exe#wsl-wrapper.exe-${{ needs.prepare-release.outputs.version }}.xpi"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
