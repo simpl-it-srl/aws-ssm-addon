@@ -54,12 +54,7 @@ jobs:
           gh release upload "${{ needs.prepare-release.outputs.version }}" "${{ steps.web-ext-build.outputs.target }}#aws-ssm-addon-${{ needs.prepare-release.outputs.version }}.xpi"
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      
-      - name: Upload XPI file as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: "aws-ssm-addon-${{ needs.prepare-release.outputs.version }}.xpi"
-          path: "${{ steps.web-ext-build.outputs.target }}"
+
 
   build-ps1:
     needs: prepare-release
@@ -96,10 +91,8 @@ jobs:
     name: "Sign the extension"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: "aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
-          path: ./aws-ssm-addon.xpi
+      - name: "Checkout"
+        uses: actions/checkout@v3
 
       - name: "web-ext sign"
         if: always()
@@ -107,7 +100,7 @@ jobs:
         uses: kewisch/action-web-ext@v1
         with:
           cmd: sign
-          source: ./aws-ssm-addon.xpi
+          source: ./src/web-ext
           channel: unlisted
           apiKey: ${{ secrets.AMO_SIGN_KEY }}
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
