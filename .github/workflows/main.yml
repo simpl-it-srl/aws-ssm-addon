@@ -34,7 +34,6 @@ jobs:
         id: pass_variable
         run: echo "::set-output name=upload_url::${{ steps.create_tag_release.outputs.upload_url }}"
 
-
   build-webext:
     needs: prepare-release
     name: "Build Web extension"
@@ -87,27 +86,24 @@ jobs:
           asset_path: ./wsl-wrapper.exe
           asset_name: wsl-wrapper.exe
 
-    sign-xpi:
-      needs: build-webext
-      name: "Sign the extension"
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/download-artifact@v3
-          with:
-            name: aws-ssm-addon.xpi
-            path: ./aws-ssm-addon.xpi
+  sign-xpi:
+    needs: build-webext
+    name: "Sign the extension"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: aws-ssm-addon.xpi
+          path: ./aws-ssm-addon.xpi
 
-        - name: "web-ext sign"
-          if: always()
-          id: web-ext-sign
-          uses: kewisch/action-web-ext@v1
-          with:
-            cmd: sign
-            source: ./aws-ssm-addon.xpi
-            channel: unlisted
-            apiKey: ${{ secrets.AMO_SIGN_KEY }}
-            apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
-            timeout: 900000
-
-
-        
+      - name: "web-ext sign"
+        if: always()
+        id: web-ext-sign
+        uses: kewisch/action-web-ext@v1
+        with:
+          cmd: sign
+          source: ./aws-ssm-addon.xpi
+          channel: unlisted
+          apiKey: ${{ secrets.AMO_SIGN_KEY }}
+          apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
+          timeout: 900000
