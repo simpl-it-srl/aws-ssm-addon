@@ -19,7 +19,7 @@ jobs:
 
       - name: Creating Git release tag for the "${{ steps.extract_version.outputs.version }}" version
         run: |
-          gh release create ${{ steps.extract_version.outputs.version }}" \
+          gh release create "${{ steps.extract_version.outputs.version }}" \
           --title "Release ${{ steps.extract_version.outputs.version }}" \
           --latest \
           --generate-notes \
