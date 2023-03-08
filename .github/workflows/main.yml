@@ -100,7 +100,8 @@ jobs:
         id: download
         with:
           name: "aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
-
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: "web-ext sign"
         if: always()
         id: web-ext-sign
