@@ -17,18 +17,15 @@ jobs:
         run: echo "::set-output name=version::$(jq -r '.version' manifest.json)"
         working-directory: src/web-ext
 
-      - name: Create tag and release
-        id: create_tag_release
-        uses: colinreginster/action-automatic-releases@latest
+      - name: Creating Git release tag for the "${{ steps.extract_version.outputs.version }}" version
+        run: |
+          gh release create ${{ steps.extract_version.outputs.version }}" \
+          --title "Release ${{ steps.extract_version.outputs.version }}" \
+          --latest \
+          --generate-notes \
+          --target "${{github.sha}}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: true
-          prerelease: false
-          draft: false
-          tag_name: "${{ steps.extract_version.outputs.version }}"
-          body: "Release ${{ steps.extract_version.outputs.version }}"
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Pass variable to other jobs
         id: pass_variable
@@ -51,15 +48,11 @@ jobs:
           filename: "{name}-{version}.xpi"
           ignoreFiles: '[ "package.json","package-lock.json","yarn.lock" ]'
 
-      - name: Attach artifact to release
-        uses: actions/upload-release-asset@v1
+      - name: Creating Git release tag for the "${{ steps.extract_version.outputs.version }}" version
+        run: |
+          gh release upload "${{ steps.extract_version.outputs.version }}" "${{ steps.web-ext-build.outputs.target }}#aws-ssm-addon-${{ steps.extract_version.outputs.version }}.xpi"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare-release.outputs.upload_url }}
-          asset_path: ${{ steps.web-ext-build.outputs.target }}
-          asset_name: aws-ssm-addon.xpi
-          asset_content_type: application/x-xpinstall
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   build-ps1:
     needs: prepare-release
@@ -85,6 +78,12 @@ jobs:
           upload_url: ${{ needs.prepare-release.outputs.upload_url }}
           asset_path: ./wsl-wrapper.exe
           asset_name: wsl-wrapper.exe
+
+      - name: Creating Git release tag for the "${{ steps.extract_version.outputs.version }}" version
+        run: |
+          gh release upload "${{ steps.extract_version.outputs.version }}" "./wsl-wrapper.exe#wsl-wrapper.exe-${{ steps.extract_version.outputs.version }}.xpi"
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   sign-xpi:
     needs: build-webext
