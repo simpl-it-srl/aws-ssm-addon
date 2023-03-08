@@ -19,7 +19,7 @@ jobs:
 
       - name: Create tag and release
         id: create_tag_release
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: colinreginster/action-automatic-releases@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -27,7 +27,7 @@ jobs:
           automatic_release_tag: true
           prerelease: false
           draft: false
-          tag_name: ${{ steps.extract_version.outputs.version }}"
+          tag_name: "${{ steps.extract_version.outputs.version }}"
           body: "Release ${{ steps.extract_version.outputs.version }}"
 
       - name: Pass variable to other jobs
