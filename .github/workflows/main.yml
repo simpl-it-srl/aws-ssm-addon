@@ -34,7 +34,7 @@ jobs:
     needs: prepare-release
     name: "Build Web extension"
     runs-on: ubuntu-latest
-     outputs:
+    outputs:
       version: "${{ needs.prepare-release.outputs.version }}"
     steps:
       - name: "Checkout"
