@@ -13,7 +13,13 @@ jobs:
       version: ${{ steps.extract_version.outputs.version }}
     steps:
       - uses: actions/checkout@v3
-
+      - name: "web-ext lint"
+        id: web-ext-lint
+        uses: kewisch/action-web-ext@v1
+        with:
+          cmd: lint
+          source: src/web-ext
+          channel: unlisted
       - name: Extract version from manifest.json
         id: extract_version
         run: echo "::set-output name=version::$(jq -r '.version' manifest.json)"
