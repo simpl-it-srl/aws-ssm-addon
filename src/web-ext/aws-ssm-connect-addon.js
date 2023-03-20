@@ -78,7 +78,7 @@
                         if (profile_var.match(/[a-zA-Z0-9]*-[a-zA-Z0-9]*/) ){
                             profile_var= window.prompt('Please set the profile you want to use with the instance',profile_var);
                         }
-                        var url= "ext+wsl2:'forward "+ $("#nav-usernameMenu", profile_var+" "+instance_id+" "+internalPort+" "+externalPort+"'";
+                        var url= "ext+wsl2:'forward "+ profile_var+" "+instance_id+" "+internalPort+" "+externalPort+"'";
                         window.location.href=url
 
                     });
