@@ -19,6 +19,7 @@ jobs:
         with:
           cmd: lint
           source: src/web-ext
+          verbose: true
           channel: unlisted
           apiKey: ${{ secrets.AMO_SIGN_KEY }}
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
