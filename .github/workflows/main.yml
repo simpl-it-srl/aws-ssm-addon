@@ -20,6 +20,10 @@ jobs:
           cmd: lint
           source: src/web-ext
           channel: unlisted
+          apiKey: ${{ secrets.AMO_SIGN_KEY }}
+          apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - name: Extract version from manifest.json
         id: extract_version
         run: echo "::set-output name=version::$(jq -r '.version' manifest.json)"
