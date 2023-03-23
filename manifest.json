@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "AWS SSM WSL",
+  "version": "1.0.4",
+  "description": "Add Connect WSL and Forward button to Aws EC2 console",
+  "icons": {
+    "48": "icons/favicon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.console.aws.amazon.com/ec2/*"
+      ],
+      "all_frames": true,
+      "run_at": "document_idle",
+      "js": [
+        "jquery-latest.js",
+        "attrchange.js",
+        "aws-ssm-connect-addon.js"
+      ]
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "ext+wsl2",
+      "name": "WSL2 scripts",
+      "uriTemplate": ""
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "aws-ssm-addon@its-easy.be",
+      "strict_min_version": "54.0",
+      "update_url": "https://raw.githubusercontent.com/colinreginster/aws-ssm-addon/main/src/web-ext/updates.json"
+    }
+  }
+}
