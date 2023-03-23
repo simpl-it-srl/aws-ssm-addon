@@ -22,13 +22,12 @@ jobs:
       - name: Update values.yaml
         uses: fjogeleit/yaml-update-action@main
         with:
-          valueFile: 'manifest.json'
+          valueFile: 'src/web-ext/manifest.json'
           propertyPath: 'version'
           branch: main
           masterBranchName: main
           value: ${{ steps.extract_version.outputs.version }}
           commitChange: true
-          workDir: src/web-ext/
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - uses: rickstaa/action-create-tag@v1
