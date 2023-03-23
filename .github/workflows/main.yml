@@ -2,7 +2,7 @@ name: "Build"
 on:
   push:
     tags:
-      - '*'
+      - '*-deploy'
   pull_request:
 
 jobs:
@@ -10,25 +10,33 @@ jobs:
     name: "Prepare the release"
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ github.ref_name }}
+      version: ${{ steps.extract_version.outputs.version }}
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Extract version from github.ref_name
+        id: extract_version
+        run: 
+          export test_version="${{ github.ref_name }}"
+          echo "::set-output name=version::${test_version#-deploy}"
       - name: Update values.yaml
         uses: fjogeleit/yaml-update-action@main
         with:
-          valueFile: 'src/web-ext/manifest.json'
+          valueFile: 'manifest.json'
           propertyPath: 'file.version'
           branch: main
           masterBranchName: main
-          value: ${{ github.ref_name }}
+          value: ${{ steps.extract_version.outputs.version }}
           commitChange: true
+          workingDir: src/web-ext/
           token: ${{ secrets.GITHUB_TOKEN }}
+          
       - uses: rickstaa/action-create-tag@v1
         id: "tag_create"
         with:
-          tag: ${{ github.ref_name }}
+          tag: ${{ steps.extract_version.outputs.version }}
           force_push_tag: true
-          message: "Release  ${{ github.ref_name }}"
+          message: "Release  ${{ steps.extract_version.outputs.version }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: "web-ext lint"
         id: web-ext-lint
@@ -42,15 +50,12 @@ jobs:
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      - name: Extract version from manifest.json
-        id: extract_version
-        run: echo "::set-output name=version::$(jq -r '.version' manifest.json)"
-        working-directory: src/web-ext
 
-      - name: Creating Git release tag for the "${{ github.ref_name }}" version
+
+      - name: Creating Git release tag for the "${{ steps.extract_version.outputs.version }}" version
         run: |
-          gh release create "${{ github.ref_name }}" \
-          --title "Release  ${{ github.ref_name }}" \
+          gh release create "${{ steps.extract_version.outputs.version }}" \
+          --title "Release  ${{ steps.extract_version.outputs.version }}" \
           --latest \
           --generate-notes \
           --target "${{github.sha}}"
