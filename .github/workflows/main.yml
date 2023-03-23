@@ -17,7 +17,7 @@ jobs:
       - name: Extract version from github.ref_name
         id: extract_version
         run: 
-          export test_version="${{ github.ref_name }}"
+          export test_version="${{ github.ref_name }}";
           echo "::set-output name=version::${test_version#-deploy}"
       - name: Update values.yaml
         uses: fjogeleit/yaml-update-action@main
