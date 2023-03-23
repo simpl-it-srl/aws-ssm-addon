@@ -131,7 +131,7 @@ jobs:
         uses: kewisch/action-web-ext@v1
         with:
           cmd: sign
-          source: "aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
+          source: "aws_ssm_addon-${{ needs.build-webext.outputs.version }}.xpi"
           channel: unlisted
           apiKey: ${{ secrets.AMO_SIGN_KEY }}
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
