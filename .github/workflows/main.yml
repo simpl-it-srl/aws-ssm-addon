@@ -23,7 +23,7 @@ jobs:
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: 'manifest.json'
-          propertyPath: 'file.version'
+          propertyPath: 'version'
           branch: main
           masterBranchName: main
           value: ${{ steps.extract_version.outputs.version }}
