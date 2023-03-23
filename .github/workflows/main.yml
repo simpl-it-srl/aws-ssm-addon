@@ -13,11 +13,21 @@ jobs:
       version: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v3
-      - uses: pocket-apps/action-update-version@v1
+      - name: Update values.yaml
+        uses: fjogeleit/yaml-update-action@main
         with:
-          files: 'src/web-ext/manifest.json'
-          version-regexp: '\d+.\d+.\d+'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          valueFile: 'src/web-ext/manifest.json'
+          propertyPath: 'file.version'
+          value: ${{ github.ref_name }}
+          commitChange: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: rickstaa/action-create-tag@v1
+        id: "tag_create"
+        with:
+          tag: ${{ github.ref_name }}
+          force_push_tag: true
+          message: "Release  ${{ github.ref_name }}"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: "web-ext lint"
         id: web-ext-lint
         uses: kewisch/action-web-ext@v1
