@@ -2,7 +2,7 @@ name: "Build"
 on:
   push:
     tags:
-      - '*-deploy'
+      - '*-deploy*'
   pull_request:
 
 jobs:
