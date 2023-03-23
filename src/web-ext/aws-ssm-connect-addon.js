@@ -54,7 +54,7 @@
                             instance_id=$("nav ol").find('li').last().find('div').find('span').find('span').text();
                          }
                         profile_var=$("#nav-usernameMenu", window.parent.document).find(`[data-testid='awsc-nav-account-menu-button']`).children().eq(1).text();
-                        if (profile_var.match(/[a-zA-Z0-9]*-[a-zA-Z0-9]*/) ){
+                        if (!profile_var.match(/[a-zA-Z0-9]*-[a-zA-Z0-9]*/) ){
                             profile_var= window.prompt('Please set the profile you want to use with the instance',profile_var);
                         }
                         var url= "ext+wsl2:'connect "+ profile_var +" "+instance_id+"'";
@@ -75,7 +75,7 @@
                         var internalPort = window.prompt('Please set the port you want to use locally',"33389");
                         var externalPort = window.prompt('Please set the port you want to use on the instance',"3389");
                         profile_var=$("#nav-usernameMenu", window.parent.document).find(`[data-testid='awsc-nav-account-menu-button']`).children().eq(1).text();
-                        if (profile_var.match(/[a-zA-Z0-9]*-[a-zA-Z0-9]*/) ){
+                        if (!profile_var.match(/[a-zA-Z0-9]*-[a-zA-Z0-9]*/) ){
                             profile_var= window.prompt('Please set the profile you want to use with the instance',profile_var);
                         }
                         var url= "ext+wsl2:'forward "+ profile_var+" "+instance_id+" "+internalPort+" "+externalPort+"'";
