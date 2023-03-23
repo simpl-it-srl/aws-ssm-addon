@@ -18,7 +18,7 @@ jobs:
         id: extract_version
         run: 
           export test_version="${{ github.ref_name }}";
-          echo "::set-output name=version::${test_version#-deploy}"
+          echo "version=${test_version#-deploy}" >> $GITHUB_OUTPUT
       - name: Update values.yaml
         uses: fjogeleit/yaml-update-action@main
         with:
@@ -28,7 +28,7 @@ jobs:
           masterBranchName: main
           value: ${{ steps.extract_version.outputs.version }}
           commitChange: true
-          workingDir: src/web-ext/
+          workDir: src/web-ext/
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - uses: rickstaa/action-create-tag@v1
