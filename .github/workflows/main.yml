@@ -18,6 +18,8 @@ jobs:
         with:
           valueFile: 'src/web-ext/manifest.json'
           propertyPath: 'file.version'
+          branch: main
+          masterBranchName: main
           value: ${{ github.ref_name }}
           commitChange: true
           token: ${{ secrets.GITHUB_TOKEN }}
