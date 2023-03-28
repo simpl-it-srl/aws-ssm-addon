@@ -123,7 +123,10 @@ jobs:
         id: download
         with:
           name: "aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
-
+      - name: Extract version from github.ref_name
+        id: check_path
+        run: 
+            find . -type d -exec ls -ld {} \;
       - name: "web-ext sign"
         if: always()
         id: web-ext-sign
