@@ -78,7 +78,7 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v3
         with: 
-            ref: "refs/tags/${{ needs.prepare-release.outputs.version }}"
+            ref: "${{ needs.prepare-release.outputs.version }}"
 
       - name: "web-ext build"
         id: web-ext-build
@@ -109,7 +109,7 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v3
         with: 
-          ref: "refs/tags/${{ needs.prepare-release.outputs.version }}"
+          ref: "${{ needs.prepare-release.outputs.version }}"
       - name: Install required PowerShell modules
         shell: powershell
         run: |
@@ -133,7 +133,7 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v3
         with: 
-            ref: "refs/tags/${{ needs.prepare-release.outputs.version }}"
+            ref: "${{ needs.build-webext.outputs.version }}"
 
       - uses: actions/download-artifact@v3
         id: download
@@ -153,7 +153,7 @@ jobs:
           apiKey: ${{ secrets.AMO_SIGN_KEY }}
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
           timeout: 900000
-          
+
       - name: Attach artifact to release"${{ needs.build-webext.outputs.version }}"
         if: steps.web-ext-sign.outcome == 'success'
         run: |
