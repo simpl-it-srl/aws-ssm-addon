@@ -49,8 +49,15 @@ jobs:
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-
+      - name: Clean existing git release tag for the "${{ steps.extract_version.outputs.version }}" version
+        continue-on-error: true
+        run: |
+          gh release delete "${{ steps.extract_version.outputs.version }}" \
+            --yes \
+            --cleanup-tag
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          
       - name: Creating Git release tag for the "${{ steps.extract_version.outputs.version }}" version
         run: |
           gh release create "${{ steps.extract_version.outputs.version }}" \
@@ -126,7 +133,7 @@ jobs:
       - name: Extract version from github.ref_name
         id: check_path
         run: 
-            find . -type d -exec ls -ld {} \;
+            ls -l /home/runner/work/aws-ssm-addon/aws-ssm-addon/
       - name: "web-ext sign"
         if: always()
         id: web-ext-sign
