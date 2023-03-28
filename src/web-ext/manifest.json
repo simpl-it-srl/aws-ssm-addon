@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "AWS SSM WSL",
+  "name": "AWS SSM ADDON",
   "version": "1.0.4",
   "description": "Add Connect WSL and Forward button to Aws EC2 console",
   "icons": {
