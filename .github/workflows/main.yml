@@ -123,10 +123,7 @@ jobs:
         id: download
         with:
           name: "aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
-      - name: Extract version from github.ref_name
-        id: check_path
-        run: 
-            ls -l /home/runner/work/aws-ssm-addon/aws-ssm-addon
+
       - name: "web-ext sign"
         if: always()
         id: web-ext-sign
@@ -134,7 +131,7 @@ jobs:
         uses: kewisch/action-web-ext@v1
         with:
           cmd: sign
-          source: "${{steps.download.outputs.download-path}}/aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
+          source: "${{steps.download.outputs.download-path}}/aws_ssm_addon-${{ needs.build-webext.outputs.version }}.xpi"
           channel: unlisted
           apiKey: ${{ secrets.AMO_SIGN_KEY }}
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
