@@ -139,7 +139,11 @@ jobs:
         id: download
         with:
           name: "aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi"
-
+      - name:  Create folder for artifacts signed"${{ needs.build-webext.outputs.version }}"
+        run: |
+          mkdir signed
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - name: "web-ext sign"
         if: always()
         continue-on-error: true
@@ -148,7 +152,7 @@ jobs:
         with:
           cmd: sign
           source: "aws_ssm_addon-${{ needs.build-webext.outputs.version }}.xpi"
-          artifacts: .
+          artifacts: ./signed
           channel: unlisted
           apiKey: ${{ secrets.AMO_SIGN_KEY }}
           apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
@@ -157,7 +161,7 @@ jobs:
       - name: Attach artifact to release"${{ needs.build-webext.outputs.version }}"
         if: steps.web-ext-sign.outcome == 'success'
         run: |
-          gh release upload "${{ needs.build-webext.outputs.version }}" "aws_ssm_addon-${{ needs.build-webext.outputs.version }}.xpi#aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi" --clobber
+          gh release upload "${{ needs.build-webext.outputs.version }}" "./signed/aws_ssm_addon-${{ needs.build-webext.outputs.version }}.xpi#aws-ssm-addon-${{ needs.build-webext.outputs.version }}.xpi" --clobber
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
