@@ -143,10 +143,15 @@ jobs:
       - name:  Create folder for artifacts signed"${{ needs.build-webext.outputs.version }}"
         run: |
           mkdir signed
+
         env:
           GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Wait for file  
+        uses: ifaxity/wait-on-action
+        with:
+            resource: aws_ssm_addon-${{ needs.build-webext.outputs.version }}.xpi  
       - name: "web-ext sign"
-        if: always()
+        
         continue-on-error: true
         id: web-ext-sign
         uses: kewisch/action-web-ext@v1
