@@ -37,9 +37,8 @@
         var callback = function(mutationsList) {
             for(var mutation of mutationsList) {
                 if (mutation.type == 'childList' && mutation.removedNodes.length==0 && mutation.addedNodes.length>0 && $(mutation.addedNodes[0]).hasClass("awsui")) {
-                    var initial_object=$(mutation.addedNodes[0]).find("span:contains('Connect')")
-                    if(initial_object.parent().is( ":button" )){
-                            var initial_connect_button=initial_object.parent();
+                  
+                            var initial_connect_button=$(mutation.addedNodes[0]).find('button[data-analytics*="Connect"]');
                             var forward_button_parent=initial_connect_button.parent().clone();
                             var connect_button_parent=initial_connect_button.parent().clone();
                             var forward_button=forward_button_parent.find("button");
@@ -90,7 +89,7 @@
                             window.location.href = url;
                             });
     
-                    }
+                    
                 }
             }
         };
