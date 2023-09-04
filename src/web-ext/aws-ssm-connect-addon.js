@@ -1,5 +1,27 @@
 (function() {
     'use strict';
+        // Helper Functions
+    const getInstanceId = () => {
+            let instance_id;
+            if ($(".instancesTable").length > 0) {
+              const table = $(".instancesTable").find("table");
+              instance_id = table.find('tbody').find('tr').find('td').has('label span span span input[type=checkbox]:checked').next().next().text();
+            }
+            if ($("nav ol").find('li').length > 3) {
+              instance_id = $("nav ol").find('li').last().find('div').find('span').find('span').text();
+            }
+            return instance_id;
+          };
+
+    const getProfileVar = () => {
+    let profile_var = $("#nav-usernameMenu", window.parent.document).find(`[data-testid='awsc-nav-account-menu-button']`).children().eq(1).text();
+    if (!profile_var.match(/[a-zA-Z0-9]*-[a-zA-Z0-9]*/)) {
+        profile_var = window.prompt('Please set the AWS profile you want to use with the instance', profile_var);
+    }
+    return profile_var;
+    };
+          
+
     var $ = window.jQuery;
     // if (window.top == window.self)
     //     return;
@@ -46,44 +68,28 @@
                         })
                         connect_button.click(function(e){
                             e.preventDefault();
-                            var instance_id;
-                            var profile_var;
-                            if($(".instancesTable").length > 0){
-                                var table = $(".instancesTable").find("table");
-                                instance_id=table.find( 'tbody' ).find( 'tr' ).find('td').has( 'label span span span input[type=checkbox]:checked' ).next().next().text();
-                            }
-                            if($("nav ol").find('li').length>3){
-                                instance_id=$("nav ol").find('li').last().find('div').find('span').find('span').text();
-                             }
-                            profile_var=$("#nav-usernameMenu", window.parent.document).find(`[data-testid='awsc-nav-account-menu-button']`).children().eq(1).text();
-                            if (!profile_var.match(/[a-zA-Z0-9]*-[a-zA-Z0-9]*/) ){
-                                profile_var= window.prompt('Please set the profile you want to use with the instance',profile_var);
-                            }
-                            var url= "ext+wsl2:'connect "+ profile_var +" "+instance_id+"'";
+                            const instance_id = getInstanceId();
+                            const aws_profile_var = getProfileVar();
+                            const win_terminal_profile = localStorage.getItem('profile') || "defaultProfile";
+
+                            const url = `ext+wsl2:'connect ${aws_profile_var} ${instance_id} ${win_terminal_profile}'`;
                             window.location.href=url
     
                         });
                         forward_button.click(function(e){
-                            e.preventDefault();
-                            var instance_id
-                            var profile_var;
-                            if($(".instancesTable").length > 0){
-                                var table = $(".instancesTable").find("table");
-                                instance_id=table.find( 'tbody' ).find( 'tr' ).find('td').has( 'label span span span input[type=checkbox]:checked' ).next().next().text();
-                            }
-                            if($("nav ol").find('li').length>3){
-                                instance_id=$("nav ol").find('li').last().find('div').find('span').find('span').text();
-                             }
-                            var internalPort = window.prompt('Please set the port you want to use locally',"33389");
-                            var externalPort = window.prompt('Please set the port you want to use on the instance',"3389");
-                            profile_var=$("#nav-usernameMenu", window.parent.document).find(`[data-testid='awsc-nav-account-menu-button']`).children().eq(1).text();
-                            if (!profile_var.match(/[a-zA-Z0-9]*-[a-zA-Z0-9]*/) ){
-                                profile_var= window.prompt('Please set the profile you want to use with the instance',profile_var);
-                            }
-                            var url= "ext+wsl2:'forward "+ profile_var+" "+instance_id+" "+internalPort+" "+externalPort+"'";
-                            window.location.href=url
+                           e.preventDefault();
+                            
+                            const instance_id = getInstanceId();
+                            const aws_profile_var = getProfileVar();
+                            const win_terminal_profile = localStorage.getItem('profile') || "defaultProfile";
+                            
+                            const internalPort = window.prompt('Please set the port you want to use locally', "33389");
+                            const externalPort = window.prompt('Please set the port you want to use on the instance', "3389");
+
+                            const url = `ext+wsl2:'forward ${aws_profile_var} ${instance_id} ${internalPort} ${externalPort} ${win_terminal_profile}'`;
+                            window.location.href = url;
+                            });
     
-                        });
                     }
                 }
             }
