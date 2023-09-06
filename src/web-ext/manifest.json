@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "AWS SSM ADDON",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Add Connect WSL and Forward button to Aws EC2 console",
   "icons": {
     "48": "icons/favicon.png"
@@ -24,6 +24,10 @@
     "page": "options.html",
     "open_in_tab": true
   },
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  
   "protocol_handlers": [
     {
       "protocol": "ext+wsl2",
